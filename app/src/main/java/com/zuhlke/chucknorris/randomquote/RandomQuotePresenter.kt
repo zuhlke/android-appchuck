@@ -39,15 +39,14 @@ class RandomQuotePresenter(view: RandomQuoteView,
                                 view.showNetworkError()
                             }
                             is NetworkResult.Success -> {
-                                log.debug("Success: " + appState.randomChuckNorrisQuote.payload.value)
-                                view.showRandomQuoteResult(appState.randomChuckNorrisQuote.payload.value)
+                                val randomQuote = appState.randomChuckNorrisQuote.payload.value
+                                log.debug("Success: $randomQuote")
+                                view.showRandomQuoteResult(randomQuote)
                             }
                         }
                     }
                 }
             }
-
-        appModel.updateState(AppState.ShowingRandomQuoteView.Loading())
     }
 
     fun refresh() {

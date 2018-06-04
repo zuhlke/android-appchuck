@@ -30,6 +30,9 @@ class RandomQuoteActivity : AppCompatActivity(), RandomQuoteView, ActivityCreate
         swipeRefreshLayout.setOnRefreshListener {
             randomQuotePresenter.refresh()
         }
+
+        title = "Random Quote Category: $category"
+
         super.onCreate(savedInstanceState)
     }
 

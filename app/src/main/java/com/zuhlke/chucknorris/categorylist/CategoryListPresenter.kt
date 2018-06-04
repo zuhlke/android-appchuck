@@ -7,7 +7,8 @@ import com.zuhlke.chucknorris.util.Logger
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 
-class CategoryListPresenter(view: CategoryListView, appModel: AppModel) {
+class CategoryListPresenter(private val view: CategoryListView,
+                            private val appModel: AppModel) {
 
     private val disposable: Disposable
     private val log = Logger(this.javaClass)
@@ -37,13 +38,19 @@ class CategoryListPresenter(view: CategoryListView, appModel: AppModel) {
                                 view.showNetworkError()
                             }
                             is NetworkResult.Success -> {
-                                log.debug("Success: " + appState.quoteCategories.payload)
-                                view.showQuoteCategories(appState.quoteCategories.payload)
+                                val quoteCategories = appState.quoteCategories.payload.shuffled()
+                                log.debug("Success: $quoteCategories")
+                                view.showQuoteCategories(quoteCategories)
                             }
                         }
                     }
                 }
             }
+    }
+
+    fun onCategoryClicked(category: String) {
+        appModel.updateState(AppState.ShowingRandomQuoteView.Loading())
+        view.launchRandomQuoteActivityWith(category)
     }
 
     fun dispose() {

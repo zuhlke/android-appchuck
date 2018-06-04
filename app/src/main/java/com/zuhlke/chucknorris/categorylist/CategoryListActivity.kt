@@ -1,5 +1,6 @@
 package com.zuhlke.chucknorris.categorylist
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -11,6 +12,7 @@ import com.zuhlke.chucknorris.ActivityCreatedCallback
 import com.zuhlke.chucknorris.R
 import com.zuhlke.chucknorris.model.AppModel
 import com.zuhlke.chucknorris.model.QuoteCategories
+import com.zuhlke.chucknorris.randomquote.RandomQuoteActivity
 
 class CategoryListActivity : AppCompatActivity(), CategoryListView, ActivityCreatedCallback {
 
@@ -23,6 +25,8 @@ class CategoryListActivity : AppCompatActivity(), CategoryListView, ActivityCrea
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category_list)
+
+        title = "Random Quote Categories"
 
         progressView = findViewById(R.id.pb_categories_loading_indicator)
 
@@ -57,7 +61,13 @@ class CategoryListActivity : AppCompatActivity(), CategoryListView, ActivityCrea
         progressView.visibility = View.GONE
         errorMessage.visibility = View.GONE
         recyclerView.visibility = View.VISIBLE
-        recyclerView.adapter = CategoryListAdapter(quoteCategories)
+        recyclerView.adapter = CategoryListAdapter(quoteCategories, categoryListPresenter)
+    }
+
+    override fun launchRandomQuoteActivityWith(category: String) {
+        val intent = Intent(this, RandomQuoteActivity::class.java)
+        intent.putExtra("category", category)
+        startActivity(intent)
     }
 
     override fun onDestroy() {

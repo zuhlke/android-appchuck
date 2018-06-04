@@ -6,4 +6,5 @@ interface CategoryListView {
     fun showLoading()
     fun showNetworkError()
     fun showQuoteCategories(quoteCategories: QuoteCategories)
+    fun launchRandomQuoteActivityWith(category: String)
 }
