@@ -10,3 +10,5 @@ data class RandomChuckNorrisQuote(
     val value: String,
     val url: String
 )
+
+typealias QuoteCategories = List<String>

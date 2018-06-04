@@ -1,4 +1,4 @@
-package com.zuhlke.chucknorris.randomquote
+package com.zuhlke.chucknorris.categorylist
 
 import com.zuhlke.chucknorris.model.AppModel
 import com.zuhlke.chucknorris.model.AppState
@@ -7,11 +7,9 @@ import com.zuhlke.chucknorris.util.Logger
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 
-class RandomQuotePresenter(view: RandomQuoteView,
-                           private val appModel: AppModel) {
+class CategoryListPresenter(view: CategoryListView, appModel: AppModel) {
 
     private val disposable: Disposable
-
     private val log = Logger(this.javaClass)
 
     init {
@@ -21,24 +19,24 @@ class RandomQuotePresenter(view: RandomQuoteView,
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { appState ->
                 when (appState) {
-                    is AppState.ShowingRandomQuoteView.Loading -> {
+                    is AppState.ShowingCategoriesView.Loading -> {
                         view.showLoading()
                         appModel
                             .chuckNorrisClient
-                            .fetchRandomQuote()
+                            .fetchCategories()
                             .subscribe {
-                                appModel.sendState(AppState.ShowingRandomQuoteView.Finished(it))
+                                appModel.sendState(AppState.ShowingCategoriesView.Finished(it))
                             }
                     }
-                    is AppState.ShowingRandomQuoteView.Finished -> {
-                        when (appState.randomChuckNorrisQuote) {
+                    is AppState.ShowingCategoriesView.Finished -> {
+                        when (appState.quoteCategories) {
                             is NetworkResult.Failure -> {
-                                log.debug("Failure: " + appState.randomChuckNorrisQuote.throwable.localizedMessage)
+                                log.debug("Failure: " + appState.quoteCategories.throwable.localizedMessage)
                                 view.showNetworkError()
                             }
                             is NetworkResult.Success -> {
-                                log.debug("Success: " + appState.randomChuckNorrisQuote.payload.value)
-                                view.showRandomQuoteResult(appState.randomChuckNorrisQuote.payload.value)
+                                log.debug("Success: " + appState.quoteCategories.payload)
+                                view.showQuoteCategories(appState.quoteCategories.payload)
                             }
                         }
                     }
@@ -46,12 +44,7 @@ class RandomQuotePresenter(view: RandomQuoteView,
             }
     }
 
-    fun refresh() {
-        appModel.sendState(AppState.ShowingRandomQuoteView.Loading())
-    }
-
     fun dispose() {
         disposable.dispose()
     }
-
 }

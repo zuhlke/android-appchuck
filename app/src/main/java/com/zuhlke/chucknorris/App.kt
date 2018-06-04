@@ -5,7 +5,7 @@ import android.app.Application
 import android.os.Bundle
 import com.zuhlke.chucknorris.model.AppModel
 import com.zuhlke.chucknorris.networking.AppHttpClient
-import com.zuhlke.chucknorris.randomquote.RandomQuoteActivity
+import com.zuhlke.chucknorris.networking.ChuckNorrisClient
 import okhttp3.OkHttpClient
 
 class App : Application() {
@@ -20,7 +20,7 @@ class App : Application() {
 
         registerActivityLifecycleCallbacks(ActivityCreationHandler { activity ->
             when (activity) {
-                is RandomQuoteActivity -> activity.onActivityCreated(model)
+                is ActivityCreatedCallback -> activity.onActivityCreated(model)
                 else -> throw IllegalStateException("Not handling activity of type: ${activity.javaClass.simpleName}")
             }
         })

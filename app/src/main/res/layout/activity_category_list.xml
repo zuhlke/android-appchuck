@@ -5,31 +5,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".randomquote.RandomQuoteActivity">
+    tools:context=".categorylist.CategoryListActivity">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/sr_refresh"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_category_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp">
-
-        <TextView
-            android:id="@+id/tv_chuck_norris_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:paddingTop="64dp"
-            android:textAlignment="center"
-            android:textSize="24sp"
-            android:textStyle="bold|italic"
-            android:visibility="gone"
-            tools:text="Chuck Norris called himself Walker because he doesn't need to run." />
-
-    </android.support.v4.widget.SwipeRefreshLayout>
+        android:layout_height="match_parent">
+    </android.support.v7.widget.RecyclerView>
 
     <com.zuhlke.chucknorris.components.ProgressBarView
-        android:id="@+id/pb_loading_indicator"
+        android:id="@+id/pb_categories_loading_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -40,5 +25,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_categories_error_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold|italic" />
 
 </android.support.constraint.ConstraintLayout>
