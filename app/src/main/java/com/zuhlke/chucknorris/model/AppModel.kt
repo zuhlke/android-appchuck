@@ -12,7 +12,7 @@ class AppModel(val chuckNorrisClient: ChuckNorrisClient) {
     val appState: Observable<AppState> =
         behaviorSubject.startWith(AppState.ShowingCategoriesView.Loading())
 
-    fun sendState(newState: AppState) {
+    fun updateState(newState: AppState) {
         behaviorSubject.onNext(newState)
     }
 

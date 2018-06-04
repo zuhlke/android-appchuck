@@ -20,12 +20,14 @@ class CategoryListPresenter(view: CategoryListView, appModel: AppModel) {
             .subscribe { appState ->
                 when (appState) {
                     is AppState.ShowingCategoriesView.Loading -> {
+                        log.debug("Loading categories")
                         view.showLoading()
+
                         appModel
                             .chuckNorrisClient
                             .fetchCategories()
                             .subscribe {
-                                appModel.sendState(AppState.ShowingCategoriesView.Finished(it))
+                                appModel.updateState(AppState.ShowingCategoriesView.Finished(it))
                             }
                     }
                     is AppState.ShowingCategoriesView.Finished -> {

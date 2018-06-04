@@ -29,7 +29,7 @@ class RandomQuotePresenter(view: RandomQuoteView,
                             .chuckNorrisClient
                             .fetchRandomQuote(category)
                             .subscribe {
-                                appModel.sendState(AppState.ShowingRandomQuoteView.Finished(it))
+                                appModel.updateState(AppState.ShowingRandomQuoteView.Finished(it))
                             }
                     }
                     is AppState.ShowingRandomQuoteView.Finished -> {
@@ -47,11 +47,11 @@ class RandomQuotePresenter(view: RandomQuoteView,
                 }
             }
 
-        appModel.sendState(AppState.ShowingRandomQuoteView.Loading())
+        appModel.updateState(AppState.ShowingRandomQuoteView.Loading())
     }
 
     fun refresh() {
-        appModel.sendState(AppState.ShowingRandomQuoteView.Loading())
+        appModel.updateState(AppState.ShowingRandomQuoteView.Loading())
     }
 
     fun dispose() {
