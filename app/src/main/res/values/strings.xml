@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Random Quote</string>
-    <string name="loading">Loading…</string>
     <string name="error_loading_random_quote">Error loading random quote</string>
     <string name="error_loading_categories">Error loading categories</string>
 </resources>

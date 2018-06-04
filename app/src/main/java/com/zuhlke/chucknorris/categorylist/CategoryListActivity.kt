@@ -5,17 +5,17 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.zuhlke.chucknorris.ActivityCreatedCallback
 import com.zuhlke.chucknorris.R
-import com.zuhlke.chucknorris.components.ProgressBarView
 import com.zuhlke.chucknorris.model.AppModel
 import com.zuhlke.chucknorris.model.QuoteCategories
 
 class CategoryListActivity : AppCompatActivity(), CategoryListView, ActivityCreatedCallback {
 
     private lateinit var categoryListPresenter: CategoryListPresenter
-    private lateinit var progressView: ProgressBarView
+    private lateinit var progressView: ProgressBar
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var recyclerView: RecyclerView
     private lateinit var errorMessage: TextView
@@ -41,20 +41,22 @@ class CategoryListActivity : AppCompatActivity(), CategoryListView, ActivityCrea
     }
 
     override fun showLoading() {
-        progressView.setLoadingMessage(R.string.loading)
         progressView.visibility = View.VISIBLE
         errorMessage.visibility = View.GONE
+        recyclerView.visibility = View.GONE
     }
 
     override fun showNetworkError() {
-        errorMessage.text = getString(R.string.error_loading_random_quote)
+        errorMessage.text = getString(R.string.error_loading_categories)
         errorMessage.visibility = View.VISIBLE
         progressView.visibility = View.GONE
+        recyclerView.visibility = View.GONE
     }
 
     override fun showQuoteCategories(quoteCategories: QuoteCategories) {
         progressView.visibility = View.GONE
         errorMessage.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
         recyclerView.adapter = CategoryListAdapter(quoteCategories)
     }
 

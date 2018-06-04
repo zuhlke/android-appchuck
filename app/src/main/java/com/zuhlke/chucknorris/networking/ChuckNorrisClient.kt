@@ -11,14 +11,14 @@ class ChuckNorrisClient(private val httpClient: HttpClient) {
 
     companion object {
         private const val API_URL = "https://api.chucknorris.io/"
-        private const val RANDOM_JOKE_PATH = "jokes/random"
+        private const val RANDOM_JOKE_PATH = "jokes/random?category="
         private const val CATEGORIES_JOKE_PATH = "jokes/categories"
     }
 
-    fun fetchRandomQuote(): Observable<NetworkResult<RandomChuckNorrisQuote>> =
+    fun fetchRandomQuote(category: String): Observable<NetworkResult<RandomChuckNorrisQuote>> =
         httpClient
-            .fetch(Request.Builder().get().url("$API_URL$RANDOM_JOKE_PATH").build())
-            .timeout(1000, TimeUnit.MILLISECONDS)
+            .fetch(Request.Builder().get().url("$API_URL$RANDOM_JOKE_PATH$category").build())
+            .timeout(10000, TimeUnit.MILLISECONDS)
             .map({
                 when (it.code()) {
                     200 -> NetworkResult.Success(it.readBodyAsString(RandomChuckNorrisQuote::class.java))
@@ -31,7 +31,7 @@ class ChuckNorrisClient(private val httpClient: HttpClient) {
     fun fetchCategories(): Observable<NetworkResult<QuoteCategories>> =
         httpClient
             .fetch(Request.Builder().get().url("$API_URL$CATEGORIES_JOKE_PATH").build())
-            .timeout(1000, TimeUnit.MILLISECONDS)
+            .timeout(10000, TimeUnit.MILLISECONDS)
             .map({
                 when (it.code()) {
                     200 -> {

@@ -21,7 +21,8 @@ class AppHttpClient(private val client: OkHttpClient) : HttpClient {
                         if (response != null) {
                             source.onNext(response)
                             source.onComplete()
-                        } else source.onError(IllegalStateException("Response is body is invalid"))
+                        }
+                        else source.onError(IllegalStateException("Response is body is invalid"))
                     }
                 })
             }

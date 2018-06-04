@@ -8,7 +8,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 
 class RandomQuotePresenter(view: RandomQuoteView,
-                           private val appModel: AppModel) {
+                           private val appModel: AppModel,
+                           category: String) {
 
     private val disposable: Disposable
 
@@ -22,10 +23,11 @@ class RandomQuotePresenter(view: RandomQuoteView,
             .subscribe { appState ->
                 when (appState) {
                     is AppState.ShowingRandomQuoteView.Loading -> {
+                        log.debug("Loading quotes for category: $category")
                         view.showLoading()
                         appModel
                             .chuckNorrisClient
-                            .fetchRandomQuote()
+                            .fetchRandomQuote(category)
                             .subscribe {
                                 appModel.sendState(AppState.ShowingRandomQuoteView.Finished(it))
                             }
@@ -44,6 +46,8 @@ class RandomQuotePresenter(view: RandomQuoteView,
                     }
                 }
             }
+
+        appModel.sendState(AppState.ShowingRandomQuoteView.Loading())
     }
 
     fun refresh() {
