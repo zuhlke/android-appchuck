@@ -16,11 +16,11 @@ class RandomQuoteViewModel : ViewModel() {
         currentQuote.value = null
     }
 
-    fun refresh() {
+    fun refresh(category: String) {
         isLoading.value = true
             appModel
                     .chuckNorrisClient
-                    .fetchRandomQuote()
+                    .fetchRandomQuote(category)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         when (it) {
