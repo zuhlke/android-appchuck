@@ -18,29 +18,39 @@ class CategoryListPresenter(private val view: CategoryListView,
             .appState
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { appState ->
+                log.debug("==== AppState: $appState")
+
                 when (appState) {
                     is AppState.ShowingCategoriesView.Loading -> {
-                        log.debug("Loading categories")
+                        log.debug("Loading")
                         view.showLoading()
 
                         appModel
                             .chuckNorrisClient
                             .fetchCategories()
                             .subscribe {
-                                appModel.updateState(AppState.ShowingCategoriesView.Finished(it))
+                                when (it) {
+                                    is NetworkResult.Success,
+                                    is NetworkResult.Failure -> {
+                                        appModel.updateState(AppState.ShowingCategoriesView.Finished(it))
+                                    }
+                                }
                             }
                     }
                     is AppState.ShowingCategoriesView.Finished -> {
-                        when (appState.quoteCategories) {
+                        when (appState.networkResult) {
                             is NetworkResult.Failure -> {
-                                log.debug("Failure: " + appState.quoteCategories.throwable.localizedMessage)
+                                log.debug("Finished Failure: " + appState.networkResult.throwable.localizedMessage)
                                 view.showNetworkError()
                             }
                             is NetworkResult.Success -> {
-                                val quoteCategories = appState.quoteCategories.payload
+                                val quoteCategories = appState.networkResult.payload
                                     .filterNot { it == "explicit" }
-                                log.debug("Success: $quoteCategories")
+                                log.debug("Finished Success: $quoteCategories")
                                 view.showQuoteCategories(quoteCategories)
+                            }
+                            is NetworkResult.RequestInProgress -> {
+                                log.debug("Finished RequestInProgress")
                             }
                         }
                     }
@@ -54,6 +64,7 @@ class CategoryListPresenter(private val view: CategoryListView,
     }
 
     fun dispose() {
+        log.debug("dispose")
         disposable.dispose()
     }
 }

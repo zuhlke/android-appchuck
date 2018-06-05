@@ -16,8 +16,7 @@ class RandomQuotePresenter(view: RandomQuoteView,
     private val log = Logger(this.javaClass)
 
     init {
-        disposable =
-            appModel
+        disposable = appModel
             .appState
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { appState ->

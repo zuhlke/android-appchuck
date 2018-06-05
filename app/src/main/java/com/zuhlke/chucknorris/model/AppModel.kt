@@ -7,13 +7,13 @@ import io.reactivex.subjects.BehaviorSubject
 
 class AppModel(val chuckNorrisClient: ChuckNorrisClient) {
 
-    private val behaviorSubject: BehaviorSubject<AppState> = BehaviorSubject.create<AppState>()
+    private val subject: BehaviorSubject<AppState> = BehaviorSubject
+        .createDefault<AppState>(AppState.ShowingCategoriesView.Loading())
 
-    val appState: Observable<AppState> =
-        behaviorSubject.startWith(AppState.ShowingCategoriesView.Loading())
+    val appState: Observable<AppState> = subject
 
     fun updateState(newState: AppState) {
-        behaviorSubject.onNext(newState)
+        subject.onNext(newState)
     }
 
 }
@@ -27,6 +27,6 @@ sealed class AppState {
 
     sealed class ShowingCategoriesView : AppState() {
         class Loading : ShowingCategoriesView()
-        class Finished(val quoteCategories: NetworkResult<QuoteCategories>)  : ShowingCategoriesView()
+        class Finished(val networkResult: NetworkResult<QuoteCategories>)  : ShowingCategoriesView()
     }
 }
