@@ -23,10 +23,8 @@ class RandomQuoteActivity : AppCompatActivity(), AppModelActivity {
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private var disposable: Disposable? = null
 
-    private lateinit var randomQuoteViewModel: RandomQuoteViewModel
-
     private val quoteObserver = Observer<String?> {
-        it?.apply { showRandomQuoteResult(this) } ?: randomQuoteViewModel.refresh()
+        it?.apply { showRandomQuoteResult(this) } ?: randomQuoteViewModel().refresh()
     }
 
     private val loadingObserver = Observer<Boolean> {
@@ -43,29 +41,20 @@ class RandomQuoteActivity : AppCompatActivity(), AppModelActivity {
         swipeRefreshLayout = findViewById(R.id.sr_refresh)
 
         swipeRefreshLayout.setOnRefreshListener {
-            randomQuoteViewModel.refresh()
+            randomQuoteViewModel().refresh()
         }
         progressView.setLoadingMessage(R.string.loading)
         super.onCreate(savedInstanceState)
     }
 
     override fun model(model: AppModel) {
-        android.util.Log.d("WTF MAN"," (╯°□°）╯︵ ┻━┻")
-        randomQuoteViewModel = ViewModelProviders.of(this).get(RandomQuoteViewModel::class.java)
-        randomQuoteViewModel.appModel = model
-        randomQuoteViewModel.currentQuote.observe(this, quoteObserver)
-        randomQuoteViewModel.isLoading.observe(this, loadingObserver)
+        randomQuoteViewModel().apply {
+            appModel = model
+        }
     }
 
     private fun showRandomQuoteResult(result: String) {
         tvChuckNorrisMessage.text = result
-        //swipeRefreshLayout.isRefreshing = false
-    }
-
-    private fun showNetworkError() {
-        tvChuckNorrisMessage.text = getString(R.string.error_loading_random_quote)
-        progressView.visibility = View.GONE
-        //swipeRefreshLayout.isRefreshing = false
     }
 
     override fun onDestroy() {
@@ -73,15 +62,21 @@ class RandomQuoteActivity : AppCompatActivity(), AppModelActivity {
         super.onDestroy()
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        randomQuoteViewModel.currentQuote.observe(this, quoteObserver)
-//        randomQuoteViewModel.isLoading.observe(this, loadingObserver)
-//    }
-//
-//    override fun onPause() {
-//        randomQuoteViewModel.currentQuote.removeObserver(quoteObserver)
-//        randomQuoteViewModel.isLoading.removeObserver(loadingObserver)
-//        super.onPause()
-//    }
+    override fun onResume() {
+        super.onResume()
+        randomQuoteViewModel().let{ vm ->
+            vm.currentQuote.observe(this, quoteObserver)
+            vm.isLoading.observe(this, loadingObserver)
+        }
+    }
+
+    override fun onPause() {
+        randomQuoteViewModel().let{ vm ->
+            vm.currentQuote.removeObserver( quoteObserver)
+            vm.isLoading.removeObserver(loadingObserver)
+        }
+        super.onPause()
+    }
+
+    private fun randomQuoteViewModel() = ViewModelProviders.of(this).get(RandomQuoteViewModel::class.java)
 }
