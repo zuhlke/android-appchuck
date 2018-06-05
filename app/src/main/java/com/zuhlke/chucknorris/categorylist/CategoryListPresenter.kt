@@ -14,8 +14,7 @@ class CategoryListPresenter(private val view: CategoryListView,
     private val log = Logger(this.javaClass)
 
     init {
-        disposable =
-            appModel
+        disposable = appModel
             .appState
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { appState ->
@@ -38,7 +37,8 @@ class CategoryListPresenter(private val view: CategoryListView,
                                 view.showNetworkError()
                             }
                             is NetworkResult.Success -> {
-                                val quoteCategories = appState.quoteCategories.payload.shuffled()
+                                val quoteCategories = appState.quoteCategories.payload
+                                    .filterNot { it == "explicit" }
                                 log.debug("Success: $quoteCategories")
                                 view.showQuoteCategories(quoteCategories)
                             }
