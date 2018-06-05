@@ -12,9 +12,10 @@ import com.zuhlke.chucknorris.ActivityCreatedCallback
 import com.zuhlke.chucknorris.R
 import com.zuhlke.chucknorris.model.AppModel
 import com.zuhlke.chucknorris.model.QuoteCategories
+import com.zuhlke.chucknorris.randomquote.AppModelActivity
 import com.zuhlke.chucknorris.randomquote.RandomQuoteActivity
 
-class CategoryListActivity : AppCompatActivity(), CategoryListView, ActivityCreatedCallback {
+class CategoryListActivity : AppCompatActivity(), CategoryListView, AppModelActivity {
 
     private lateinit var categoryListPresenter: CategoryListPresenter
     private lateinit var progressView: ProgressBar
@@ -40,8 +41,8 @@ class CategoryListActivity : AppCompatActivity(), CategoryListView, ActivityCrea
         errorMessage = findViewById(R.id.tv_categories_error_message)
     }
 
-    override fun onActivityCreated(appModel: AppModel) {
-        categoryListPresenter = CategoryListPresenter(this, appModel)
+    override fun model(model: AppModel) {
+        categoryListPresenter = CategoryListPresenter(this, model)
     }
 
     override fun showLoading() {
