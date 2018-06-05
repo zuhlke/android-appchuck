@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
 import com.zuhlke.chucknorris.R
-import com.zuhlke.chucknorris.components.ProgressBarView
 import com.zuhlke.chucknorris.model.AppModel
 import io.reactivex.disposables.Disposable
 
@@ -19,7 +18,7 @@ interface AppModelActivity {
 class RandomQuoteActivity : AppCompatActivity(), AppModelActivity {
 
     private lateinit var tvChuckNorrisMessage: TextView
-    private lateinit var progressView: ProgressBarView
+    private lateinit var progressView: ProgressBar
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private var disposable: Disposable? = null
 

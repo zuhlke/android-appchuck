@@ -13,6 +13,7 @@ import com.zuhlke.chucknorris.randomquote.AppModelActivity
 import com.zuhlke.chucknorris.randomquote.RandomQuoteActivity
 import com.zuhlke.chucknorris.randomquote.RandomQuoteView
 import com.zuhlke.chucknorris.randomquote.RandomQuoteViewModel
+import com.zuhlke.chucknorris.networking.ChuckNorrisClient
 import okhttp3.OkHttpClient
 
 class App : Application() {
@@ -36,16 +37,10 @@ class ActivityLifeCycleCallbackHandler(private val appModel: AppModel) : Applica
             else -> throw RuntimeException("WTF! (╯°□°）╯︵ ┻━┻")
         }
     }
-
     override fun onActivityResumed(activity: Activity?) {}
-
     override fun onActivityPaused(activity: Activity?) {}
-
     override fun onActivityStarted(activity: Activity?) {}
-
     override fun onActivityDestroyed(activity: Activity?) {}
-
     override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {}
-
     override fun onActivityStopped(activity: Activity?) {}
 }

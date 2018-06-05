@@ -1,18 +1,18 @@
 package com.zuhlke.chucknorris.model
 
+import com.zuhlke.chucknorris.networking.ChuckNorrisClient
+import com.zuhlke.chucknorris.networking.NetworkResult
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
-import com.zuhlke.chucknorris.ChuckNorrisClient
-import com.zuhlke.chucknorris.networking.NetworkResult
 
 class AppModel(val chuckNorrisClient: ChuckNorrisClient) {
 
     private val behaviorSubject: BehaviorSubject<AppState> = BehaviorSubject.create<AppState>()
 
     val appState: Observable<AppState> =
-        behaviorSubject.startWith(AppState.ShowingRandomQuoteView.Loading())
+        behaviorSubject.startWith(AppState.ShowingCategoriesView.Loading())
 
-    fun sendState(newState: AppState) {
+    fun updateState(newState: AppState) {
         behaviorSubject.onNext(newState)
     }
 
@@ -27,6 +27,6 @@ sealed class AppState {
 
     sealed class ShowingCategoriesView : AppState() {
         class Loading : ShowingCategoriesView()
-        class Finished : ShowingCategoriesView()
+        class Finished(val quoteCategories: NetworkResult<QuoteCategories>)  : ShowingCategoriesView()
     }
 }
