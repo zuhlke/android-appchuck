@@ -11,41 +11,46 @@ class RandomQuotePresenter(view: RandomQuoteView,
                            private val appModel: AppModel,
                            category: String) {
 
-    private val disposable: Disposable
+    private val disposables: MutableList<Disposable> = mutableListOf()
 
     private val log = Logger(this.javaClass)
 
     init {
-        disposable = appModel
-            .appState
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { appState ->
-                when (appState) {
-                    is AppState.ShowingRandomQuoteView.Loading -> {
-                        log.debug("Loading quotes for category: $category")
-                        view.showLoading()
-                        appModel
-                            .chuckNorrisClient
-                            .fetchRandomQuote(category)
-                            .subscribe {
-                                appModel.updateState(AppState.ShowingRandomQuoteView.Finished(it))
-                            }
-                    }
-                    is AppState.ShowingRandomQuoteView.Finished -> {
-                        when (appState.randomChuckNorrisQuote) {
-                            is NetworkResult.Failure -> {
-                                log.debug("Failure: " + appState.randomChuckNorrisQuote.throwable.localizedMessage)
-                                view.showNetworkError()
-                            }
-                            is NetworkResult.Success -> {
-                                val randomQuote = appState.randomChuckNorrisQuote.payload.value
-                                log.debug("Success: $randomQuote")
-                                view.showRandomQuoteResult(randomQuote)
+        disposables.add(
+            appModel
+                .appState
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { appState ->
+                    when (appState) {
+                        is AppState.ShowingRandomQuoteView.Loading -> {
+                            log.debug("Loading quotes for category: $category")
+                            view.showLoading()
+
+                            disposables.add(
+                                appModel
+                                    .chuckNorrisClient
+                                    .fetchRandomQuote(category)
+                                    .subscribe {
+                                        appModel.updateState(AppState.ShowingRandomQuoteView.Finished(it))
+                                    }
+                            )
+                        }
+                        is AppState.ShowingRandomQuoteView.Finished -> {
+                            when (appState.randomChuckNorrisQuote) {
+                                is NetworkResult.Failure -> {
+                                    log.debug("Failure: " + appState.randomChuckNorrisQuote.throwable.localizedMessage)
+                                    view.showNetworkError()
+                                }
+                                is NetworkResult.Success -> {
+                                    val randomQuote = appState.randomChuckNorrisQuote.payload.value
+                                    log.debug("Success: $randomQuote")
+                                    view.showRandomQuoteResult(randomQuote)
+                                }
                             }
                         }
                     }
                 }
-            }
+        )
     }
 
     fun refresh() {
@@ -53,7 +58,7 @@ class RandomQuotePresenter(view: RandomQuoteView,
     }
 
     fun dispose() {
-        disposable.dispose()
+        disposables.forEach { it.dispose() }
     }
 
 }

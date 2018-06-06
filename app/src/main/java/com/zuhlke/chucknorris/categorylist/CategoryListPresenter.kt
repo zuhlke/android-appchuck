@@ -10,52 +10,56 @@ import io.reactivex.disposables.Disposable
 class CategoryListPresenter(private val view: CategoryListView,
                             private val appModel: AppModel) {
 
-    private val disposable: Disposable
+    private val disposables: MutableList<Disposable> = mutableListOf()
     private val log = Logger(this.javaClass)
 
     init {
-        disposable = appModel
-            .appState
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { appState ->
-                log.debug("==== AppState: $appState")
+        disposables.add(
+            appModel
+                .appState
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { appState ->
+                    log.debug("==== AppState: $appState")
 
-                when (appState) {
-                    is AppState.ShowingCategoriesView.Loading -> {
-                        log.debug("Loading")
-                        view.showLoading()
+                    when (appState) {
+                        is AppState.ShowingCategoriesView.Loading -> {
+                            log.debug("Loading")
+                            view.showLoading()
 
-                        appModel
-                            .chuckNorrisClient
-                            .fetchCategories()
-                            .subscribe {
-                                when (it) {
-                                    is NetworkResult.Success,
-                                    is NetworkResult.Failure -> {
-                                        appModel.updateState(AppState.ShowingCategoriesView.Finished(it))
+                            disposables.add(
+                                appModel
+                                    .chuckNorrisClient
+                                    .fetchCategories()
+                                    .subscribe {
+                                        when (it) {
+                                            is NetworkResult.Success,
+                                            is NetworkResult.Failure -> {
+                                                appModel.updateState(AppState.ShowingCategoriesView.Finished(it))
+                                            }
+                                        }
                                     }
+                            )
+                        }
+                        is AppState.ShowingCategoriesView.Finished -> {
+                            when (appState.networkResult) {
+                                is NetworkResult.Failure -> {
+                                    log.debug("Finished Failure: " + appState.networkResult.throwable.localizedMessage)
+                                    view.showNetworkError()
                                 }
-                            }
-                    }
-                    is AppState.ShowingCategoriesView.Finished -> {
-                        when (appState.networkResult) {
-                            is NetworkResult.Failure -> {
-                                log.debug("Finished Failure: " + appState.networkResult.throwable.localizedMessage)
-                                view.showNetworkError()
-                            }
-                            is NetworkResult.Success -> {
-                                val quoteCategories = appState.networkResult.payload
-                                    .filterNot { it == "explicit" }
-                                log.debug("Finished Success: $quoteCategories")
-                                view.showQuoteCategories(quoteCategories)
-                            }
-                            is NetworkResult.RequestInProgress -> {
-                                log.debug("Finished RequestInProgress")
+                                is NetworkResult.Success -> {
+                                    val quoteCategories = appState.networkResult.payload
+                                        .filterNot { it == "explicit" }
+                                    log.debug("Finished Success: $quoteCategories")
+                                    view.showQuoteCategories(quoteCategories)
+                                }
+                                is NetworkResult.RequestInProgress -> {
+                                    log.debug("Finished RequestInProgress")
+                                }
                             }
                         }
                     }
                 }
-            }
+        )
     }
 
     fun onCategoryClicked(category: String) {
@@ -65,6 +69,6 @@ class CategoryListPresenter(private val view: CategoryListView,
 
     fun dispose() {
         log.debug("dispose")
-        disposable.dispose()
+        disposables.forEach { it.dispose() }
     }
 }
